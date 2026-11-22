@@ -1,0 +1,15 @@
+services:
+  boundary:
+    build: .
+    ports:
+      - "127.0.0.1:8084:8084"
+    environment:
+      ADMIN_TOKEN: ${ADMIN_TOKEN:?Generate an operator token of at least 24 characters first}
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 384m
+    pids_limit: 64
+    restart: unless-stopped

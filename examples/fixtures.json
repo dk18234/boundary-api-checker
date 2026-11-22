@@ -1,0 +1,42 @@
+[
+  {
+    "name": "GPU research job",
+    "method": "POST",
+    "path": "/jobs",
+    "request": {
+      "body": {
+        "label": "spectra-analysis",
+        "queue": "gpu",
+        "cores": 8
+      }
+    }
+  },
+  {
+    "name": "Large CPU job",
+    "method": "POST",
+    "path": "/jobs",
+    "request": {
+      "body": {
+        "label": "simulation",
+        "queue": "cpu",
+        "cores": 64
+      }
+    }
+  },
+  {
+    "name": "List with default limit",
+    "method": "GET",
+    "path": "/jobs",
+    "request": {}
+  },
+  {
+    "name": "Fetch an existing job",
+    "method": "GET",
+    "path": "/jobs/{jobId}",
+    "request": {
+      "parameters": {
+        "path:jobId": "job_001"
+      }
+    }
+  }
+]

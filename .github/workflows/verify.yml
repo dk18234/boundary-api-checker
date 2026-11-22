@@ -1,0 +1,38 @@
+name: Verify Boundary
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  contract-tests:
+    name: Node ${{ matrix.node }} · engine, worker, CLI, HTTP
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run demo:evidence
+      - name: Ensure generated demo matches source
+        run: git diff --exit-code -- docs/app.js docs/worker.js docs/cases.json docs/index.html docs/styles.css examples
+      - uses: actions/upload-artifact@v4
+        with:
+          name: reports-node-${{ matrix.node }}
+          path: reports/
+  container:
+    name: Nonroot container · actual HTTP smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: docker build -t boundary:ci .
+      - run: node scripts/container-smoke.mjs
