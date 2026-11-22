@@ -1,0 +1,6 @@
+node_modules/
+build/
+docs/
+examples/
+reports/
+package-lock.json

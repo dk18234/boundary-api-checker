@@ -6,18 +6,18 @@ Use Node 22+ and `npm ci && npm test`. Generate an operator token with a cryptog
 
 The web workbench computes in the browser and does not send specs to the local API. The API is a separate operator integration: POST a JSON object with `baseline` and `candidate` text plus optional `fixtures` array to `/api/compare`, with `X-Admin-Token`. HTTP 200 carries a report even if its verdict is BLOCK or REVIEW. Consumers must inspect `verdict`; HTTP success is not a compatibility verdict.
 
-| Resource | Limit |
-|---|---|
-| Each spec | 512 KiB, depth 40, 20,000 visited values |
-| Operations | 300 per document |
-| Findings | 600, then explicit input error rather than truncation |
-| Reference/schema traversal | 24 comparison/validation levels |
-| Fixtures | 100 fixtures, 64 KiB each, shared depth/node admission bounds |
-| API envelope | 1.2 MB |
-| API active requests | Two comparison slots including body intake; excess returns 429 |
-| API comparison | Eight-second worker deadline; 96 MiB worker old-generation heap cap |
-| Browser comparison | Ten-second worker deadline |
-| Replay | Five seconds and 64 KiB response per fixture |
+| Resource                   | Limit                                                               |
+| -------------------------- | ------------------------------------------------------------------- |
+| Each spec                  | 512 KiB, depth 40, 20,000 visited values                            |
+| Operations                 | 300 per document                                                    |
+| Findings                   | 600, then explicit input error rather than truncation               |
+| Reference/schema traversal | 24 comparison/validation levels                                     |
+| Fixtures                   | 100 fixtures, 64 KiB each, shared depth/node admission bounds       |
+| API envelope               | 1.2 MB                                                              |
+| API active requests        | Two comparison slots including body intake; excess returns 429      |
+| API comparison             | Eight-second worker deadline; 96 MiB worker old-generation heap cap |
+| Browser comparison         | Ten-second worker deadline                                          |
+| Replay                     | Five seconds and 64 KiB response per fixture                        |
 
 Limits are admission/operational bounds, not a measured throughput or memory guarantee. Parsing happens before some structural limits can be checked; browser/API workers provide an additional isolation boundary. The CLI trusts the local operator's file paths and reads a file before applying its size limit.
 

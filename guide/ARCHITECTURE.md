@@ -26,21 +26,21 @@ flowchart TD
 
 ## Source map
 
-| File | Responsibility |
-|---|---|
-| `src/core/parse.ts` | Bounded parsing, YAML AST line mapping, internal references |
-| `src/core/operations.ts` | Operation normalization and request/response fixture validation |
-| `src/core/schema.ts` | Supported schema assertions, coverage, sample values, verified witness search |
-| `src/core/compare.ts` | Directional contract rules and report assembly |
-| `src/core/fixtures.ts` | Fixture schema, provenance, outcome policy |
-| `src/core/report.ts` | Markdown, terminal summaries, exit codes |
-| `src/cli.ts` | Files, arguments, reports, adapter selection |
-| `src/replay.ts` | Bounded actual loopback HTTP calls |
-| `src/server.ts` | Token-protected local compare API, admission, static workbench |
-| `src/server-worker.ts` | Per-comparison thread boundary |
-| `src/web/worker.ts` | Browser worker using the same core |
-| `src/web/app.ts` | Rendering and browser interactions |
-| `src/demo-service.ts` | Disposable synthetic service for actual replay |
+| File                     | Responsibility                                                                |
+| ------------------------ | ----------------------------------------------------------------------------- |
+| `src/core/parse.ts`      | Bounded parsing, YAML AST line mapping, internal references                   |
+| `src/core/operations.ts` | Operation normalization and request/response fixture validation               |
+| `src/core/schema.ts`     | Supported schema assertions, coverage, sample values, verified witness search |
+| `src/core/compare.ts`    | Directional contract rules and report assembly                                |
+| `src/core/fixtures.ts`   | Fixture schema, provenance, outcome policy                                    |
+| `src/core/report.ts`     | Markdown, terminal summaries, exit codes                                      |
+| `src/cli.ts`             | Files, arguments, reports, adapter selection                                  |
+| `src/replay.ts`          | Bounded actual loopback HTTP calls                                            |
+| `src/server.ts`          | Token-protected local compare API, admission, static workbench                |
+| `src/server-worker.ts`   | Per-comparison thread boundary                                                |
+| `src/web/worker.ts`      | Browser worker using the same core                                            |
+| `src/web/app.ts`         | Rendering and browser interactions                                            |
+| `src/demo-service.ts`    | Disposable synthetic service for actual replay                                |
 
 ## Deliberate tradeoffs
 

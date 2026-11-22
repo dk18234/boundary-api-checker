@@ -2,10 +2,10 @@
 
 ## Direction
 
-| Contract | Source set | Target set | Compatibility condition |
-|---|---|---|---|
-| Requests | Baseline accepted values | Candidate accepted values | Baseline is contained in candidate |
-| Responses | Candidate permitted values | Baseline consumer values | Candidate is contained in baseline |
+| Contract  | Source set                 | Target set                | Compatibility condition            |
+| --------- | -------------------------- | ------------------------- | ---------------------------------- |
+| Requests  | Baseline accepted values   | Candidate accepted values | Baseline is contained in candidate |
+| Responses | Candidate permitted values | Baseline consumer values  | Candidate is contained in baseline |
 
 These are structural JSON value contracts. They do not infer side effects, business rules, status frequency, timing, ordering, idempotency, availability, or what a deployed client actually does.
 
@@ -13,23 +13,23 @@ PASS means no blocking or review finding in this bounded profile. It is not a un
 
 ## Rules
 
-| Area | Blocking direction | Other behavior |
-|---|---|---|
-| Operation | Removed method/template path | Addition compatible |
-| Parameter | Declared parameter removed; optional becomes required; new required input | Optional addition compatible; schema compared as request |
-| Request body | Removed declared body; newly required body | Optional addition compatible |
-| Media types | Previously declared representation removed | Request addition compatible; response addition requires negotiation review |
-| Status codes | Added explicit/default status not covered by an old exact status or old default | Removal structurally narrows outputs; behavioral review remains a consumer concern |
-| Types | Request accepted types removed; response permitted types added | `integer` is contained in `number`; 3.0 nullable and 3.1 type unions supported |
-| Scalar enum | Request value removed; response value added | Composite enums require review |
-| Numeric bounds | Request interval narrows; response interval expands | Inclusive/exclusive bounds checked; 3.0 booleans and 3.1 numeric exclusive bounds differ |
-| String/array sizes | Request sizes narrow; response sizes expand | Unicode code points counted for string length |
-| Required fields | Newly required request field; previously guaranteed response field no longer required | Other requiredness direction compatible |
-| Object properties | Source permits a field the target forbids; child schema incompatible | Missing property schema is unconstrained for an open object |
-| Extra properties | Request object closes; response object opens against a closed consumer | Schema-valued extra properties require review |
-| Arrays | Incompatible item schema or size constraint | Tuple/prefix/composition constructs require review |
-| Defaults | Changed default | REVIEW because application behavior is not inferred |
-| Generated SDK names | Changed `operationId` | REVIEW |
+| Area                | Blocking direction                                                                    | Other behavior                                                                           |
+| ------------------- | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Operation           | Removed method/template path                                                          | Addition compatible                                                                      |
+| Parameter           | Declared parameter removed; optional becomes required; new required input             | Optional addition compatible; schema compared as request                                 |
+| Request body        | Removed declared body; newly required body                                            | Optional addition compatible                                                             |
+| Media types         | Previously declared representation removed                                            | Request addition compatible; response addition requires negotiation review               |
+| Status codes        | Added explicit/default status not covered by an old exact status or old default       | Removal structurally narrows outputs; behavioral review remains a consumer concern       |
+| Types               | Request accepted types removed; response permitted types added                        | `integer` is contained in `number`; 3.0 nullable and 3.1 type unions supported           |
+| Scalar enum         | Request value removed; response value added                                           | Composite enums require review                                                           |
+| Numeric bounds      | Request interval narrows; response interval expands                                   | Inclusive/exclusive bounds checked; 3.0 booleans and 3.1 numeric exclusive bounds differ |
+| String/array sizes  | Request sizes narrow; response sizes expand                                           | Unicode code points counted for string length                                            |
+| Required fields     | Newly required request field; previously guaranteed response field no longer required | Other requiredness direction compatible                                                  |
+| Object properties   | Source permits a field the target forbids; child schema incompatible                  | Missing property schema is unconstrained for an open object                              |
+| Extra properties    | Request object closes; response object opens against a closed consumer                | Schema-valued extra properties require review                                            |
+| Arrays              | Incompatible item schema or size constraint                                           | Tuple/prefix/composition constructs require review                                       |
+| Defaults            | Changed default                                                                       | REVIEW because application behavior is not inferred                                      |
+| Generated SDK names | Changed `operationId`                                                                 | REVIEW                                                                                   |
 
 A newly declared optional constrained field in an **open** baseline request object can be incompatible: the old schema permitted arbitrary values under that name. An addition to a **closed** baseline request object can be compatible because the old client was not allowed to send that field at all. This strict acceptance-set policy is deliberate and can be more conservative than a particular server implementation.
 
@@ -51,20 +51,30 @@ The rule engine is conservative and local. It does not prove satisfiability or r
 
 ```json
 [
-  {"name":"existing request","method":"POST","path":"/jobs","request":{"body":{"label":"test","queue":"gpu","cores":8}}},
-  {"name":"candidate output","method":"GET","path":"/jobs/{jobId}","response":{"source":"candidate","status":200,"body":{"id":17,"state":"cancelled"}}}
+  {
+    "name": "existing request",
+    "method": "POST",
+    "path": "/jobs",
+    "request": { "body": { "label": "test", "queue": "gpu", "cores": 8 } }
+  },
+  {
+    "name": "candidate output",
+    "method": "GET",
+    "path": "/jobs/{jobId}",
+    "response": { "source": "candidate", "status": 200, "body": { "id": 17, "state": "cancelled" } }
+  }
 ]
 ```
 
-| Fixture | Before | After | Outcome |
-|---|---|---|---|
-| Existing request | valid | invalid | Regression / BLOCK |
-| Existing request | invalid | any known | Baseline-invalid / REVIEW |
-| Candidate response | invalid | valid | Regression / BLOCK |
-| Candidate response | any known | invalid | Candidate-invalid / REVIEW |
-| Baseline response (default provenance) | valid | invalid | Baseline-only; informational |
-| Baseline response | invalid | any known | Baseline-invalid / REVIEW |
-| Either | unknown on either side | any | REVIEW |
-| Either | valid | valid | Unchanged |
+| Fixture                                | Before                 | After     | Outcome                      |
+| -------------------------------------- | ---------------------- | --------- | ---------------------------- |
+| Existing request                       | valid                  | invalid   | Regression / BLOCK           |
+| Existing request                       | invalid                | any known | Baseline-invalid / REVIEW    |
+| Candidate response                     | invalid                | valid     | Regression / BLOCK           |
+| Candidate response                     | any known              | invalid   | Candidate-invalid / REVIEW   |
+| Baseline response (default provenance) | valid                  | invalid   | Baseline-only; informational |
+| Baseline response                      | invalid                | any known | Baseline-invalid / REVIEW    |
+| Either                                 | unknown on either side | any       | REVIEW                       |
+| Either                                 | valid                  | valid     | Unchanged                    |
 
 Actual HTTP replay validates the baseline request, executes it against the explicit local target, validates the observed candidate response against both contracts, and reports fixture-specific PASS/BLOCK/REVIEW. A candidate-invalid observed response requires review; it does not become evidence of a valid new output. Replay results do not replace static coverage checks.

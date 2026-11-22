@@ -6,7 +6,7 @@ A developer workbench and CI gate that compares two OpenAPI contracts, identifie
 
 [Live workbench](https://dk18234.github.io/boundary-api-checker/) · [All portfolio projects](https://dk18234.github.io/webhook-recovery-lab/projects/) · [Beginner learning path](guide/LEARNING.md) · [Exact rule profile](guide/RULES.md)
 
-![Boundary workbench](docs/assets/workbench.png)
+![Boundary workbench](docs/assets/workbench.jpg)
 
 ## Why this exists
 
@@ -36,12 +36,12 @@ node bin/boundary.mjs compare examples/v1.json examples/breaking.json \
   --json reports/change.json --markdown reports/change.md
 ```
 
-| Exit | Meaning | CI action |
-|---|---|---|
-| 0 | PASS within the supported rule profile | Continue |
-| 1 | BLOCK: incompatible structural change or fixture regression | Fail |
-| 2 | REVIEW: unsupported feature or ambiguous fixture | Fail pending review |
-| 3 | Invalid input, usage, resource limit, or I/O failure | Fail |
+| Exit | Meaning                                                     | CI action           |
+| ---- | ----------------------------------------------------------- | ------------------- |
+| 0    | PASS within the supported rule profile                      | Continue            |
+| 1    | BLOCK: incompatible structural change or fixture regression | Fail                |
+| 2    | REVIEW: unsupported feature or ambiguous fixture            | Fail pending review |
+| 3    | Invalid input, usage, resource limit, or I/O failure        | Fail                |
 
 ## Replay actual HTTP traffic
 

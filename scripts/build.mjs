@@ -1,10 +1,27 @@
-import{build}from'esbuild';
-import{mkdir,copyFile,writeFile,readFile}from'node:fs/promises';
-import{examples,exampleDocuments,requestFixtures}from'../build/examples.js';
-await mkdir('docs',{recursive:true});await mkdir('examples',{recursive:true});
-await build({entryPoints:{app:'src/web/app.ts',worker:'src/web/worker.ts'},bundle:true,format:'esm',platform:'browser',target:['es2022'],outdir:'docs',minify:true,legalComments:'inline'});
-for(const file of['index.html','styles.css','favicon.svg'])await copyFile('src/web/'+file,'docs/'+file);
-await writeFile('docs/.nojekyll','');await writeFile('docs/cases.json',JSON.stringify(examples(),null,2)+'\n');
-const documents=exampleDocuments();for(const [name,doc]of Object.entries(documents))await writeFile('examples/'+(name==='baseline'?'v1':name)+'.json',JSON.stringify(doc,null,2)+'\n');
-await writeFile('examples/fixtures.json',JSON.stringify(requestFixtures(),null,2)+'\n');
+import { build } from 'esbuild';
+import { mkdir, copyFile, writeFile, readFile } from 'node:fs/promises';
+import { examples, exampleDocuments, requestFixtures } from '../build/examples.js';
+await mkdir('docs', { recursive: true });
+await mkdir('examples', { recursive: true });
+await build({
+  entryPoints: { app: 'src/web/app.ts', worker: 'src/web/worker.ts' },
+  bundle: true,
+  format: 'esm',
+  platform: 'browser',
+  target: ['es2022'],
+  outdir: 'docs',
+  minify: true,
+  legalComments: 'inline',
+});
+for (const file of ['index.html', 'styles.css', 'favicon.svg'])
+  await copyFile('src/web/' + file, 'docs/' + file);
+await writeFile('docs/.nojekyll', '');
+await writeFile('docs/cases.json', JSON.stringify(examples(), null, 2) + '\n');
+const documents = exampleDocuments();
+for (const [name, doc] of Object.entries(documents))
+  await writeFile(
+    'examples/' + (name === 'baseline' ? 'v1' : name) + '.json',
+    JSON.stringify(doc, null, 2) + '\n',
+  );
+await writeFile('examples/fixtures.json', JSON.stringify(requestFixtures(), null, 2) + '\n');
 console.log('Built shared engine, CLI/API output, browser workers, and reproducible examples.');
